@@ -12,12 +12,14 @@ export class OrderService {
     for (const ticket of tickets) {
       const { film, session, row, seat } = ticket;
 
+      // поиск фильма в базе, для которого будут добавлены занятые места
       const document = await this.filmsRepository.findFilm(film);
 
       if (!document) {
         throw new BadRequestException('Фильм не найден!');
       }
 
+      // поиск сеанса для найденного фильма
       const currentSession = document.schedule.find(
         (item) => item.id === session,
       );
@@ -30,7 +32,10 @@ export class OrderService {
         throw new BadRequestException('Это место уже занято!');
       }
 
+      // пуш ряда и места в существующий массив сенса
       currentSession.taken.push(seatIdentifier);
+
+      // обновление расписания для сеанса фильма на текущей итерации (const ticket of tickets)
       await document.updateOne({
         $set: {
           schedule: document.schedule,
@@ -38,6 +43,9 @@ export class OrderService {
       });
     }
 
-    return { items: order.tickets.map((tiket) => ({ ...tiket })) };
+    return {
+      total: tickets.length,
+      items: order.tickets.map((tiket) => ({ ...tiket })),
+    };
   }
 }
