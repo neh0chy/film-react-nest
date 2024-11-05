@@ -36,11 +36,7 @@ export class OrderService {
       currentSession.taken.push(seatIdentifier);
 
       // обновление расписания для сеанса фильма на текущей итерации (const ticket of tickets)
-      await document.updateOne({
-        $set: {
-          schedule: document.schedule,
-        },
-      });
+      await document.save();
     }
 
     return {
