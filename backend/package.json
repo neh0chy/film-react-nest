@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.2",
     "@types/debug": "^4.1.12",
+    "class-validator": "^0.14.1",
     "debug": "^4.3.5",
     "dotenv": "^16.4.5",
     "mongoose": "^8.4.4",

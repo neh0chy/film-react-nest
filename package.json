@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@nestjs/typeorm": "^10.0.2",
+    "class-validator": "^0.14.1",
+    "pg": "^8.13.1",
+    "typeorm": "^0.3.20"
+  }
+}
