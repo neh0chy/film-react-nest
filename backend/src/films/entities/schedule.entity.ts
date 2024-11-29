@@ -1,40 +1,38 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { IsNumber, IsString } from 'class-validator';
-import { Film } from './film.entity';
+import {
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+} from 'typeorm';
+import { FilmEntity } from './film.entity';
 
-@Entity()
-export class Schedule {
-  @PrimaryGeneratedColumn()
+export type ScheduleRow = Omit<ScheduleEntity, 'film'>;
+
+@Entity('schedules')
+export class ScheduleEntity {
+  @PrimaryGeneratedColumn('uuid', {})
   id: string;
 
   @Column()
-  @IsString()
   daytime: string;
 
-  @Column()
-  @IsString()
-  filmId: string;
-
-  @Column()
-  @IsNumber()
+  @Column('integer')
   hall: number;
 
-  @Column()
-  @IsString()
+  @Column('integer')
   rows: number;
 
-  @Column()
-  @IsNumber()
+  @Column('integer')
   seats: number;
 
-  @Column()
-  @IsNumber()
+  @Column('float')
   price: number;
 
-  @Column({ type: 'text' })
-  @IsString()
+  @Column('text')
   taken: string;
 
-  @ManyToOne(() => Film, (film) => film.schedule)
-  film: Film;
+  @ManyToOne(() => FilmEntity, (film) => film.schedule)
+  @JoinColumn({ name: 'filmId' })
+  film: FilmEntity;
 }

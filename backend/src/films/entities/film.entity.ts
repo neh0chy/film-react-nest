@@ -1,44 +1,47 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { IsString, IsNumber, IsArray } from 'class-validator';
-import { Schedule } from './schedule.entity';
+import {
+  OneToMany,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+} from 'typeorm';
+import { ScheduleEntity, ScheduleRow } from './schedule.entity';
 
-@Entity()
-export class Film {
-  @PrimaryGeneratedColumn()
+export type FilmRow = Omit<FilmEntity, 'schedule'> & {
+  schedule: ScheduleRow[];
+};
+
+@Entity('films')
+export class FilmEntity {
+  @PrimaryGeneratedColumn('uuid', {})
   id: string;
 
-  @Column()
-  @IsString()
-  title: string;
-
-  @Column()
-  @IsString()
-  director: string;
-
-  @Column()
-  @IsNumber()
+  @Column('float')
   rating: number;
 
-  @Column('text', { array: true })
-  @IsArray()
-  tags: string[];
+  @Column('varchar')
+  director: string;
 
-  @Column()
-  @IsString()
+  @Column('text')
+  tags: string;
+
+  @Column('varchar')
   image: string;
 
-  @Column()
-  @IsString()
+  @Column('varchar')
   cover: string;
 
-  @Column()
-  @IsString()
+  @Column('varchar')
+  title: string;
+
+  @Column('varchar')
   about: string;
 
-  @Column()
-  @IsString()
+  @Column('varchar')
   description: string;
 
-  @OneToMany(() => Schedule, (schedule) => schedule.film, { cascade: true })
-  schedule: Schedule[];
+  @OneToMany(() => ScheduleEntity, (schedule) => schedule.film, {
+    cascade: true,
+  })
+  schedule: ScheduleEntity[];
 }

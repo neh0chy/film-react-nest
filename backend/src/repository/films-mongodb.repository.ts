@@ -1,12 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { GetFilmDto, GetScheduleDto } from 'src/films/dto/films.dto';
-import { Film, FilmDocument } from 'src/films/films.schema.ts';
+import { Film, FilmDocument } from 'src/films/schemas/films.schema';
 
 @Injectable()
-export class FilmsRepository {
+export class FilmsRepositoryMongo {
   constructor(
-    @Inject('FILM_DB_CONNECT') private filmModel: Model<FilmDocument>,
+    @Inject('FILM_REPOSITORY') private filmModel: Model<FilmDocument>,
   ) {}
 
   getFilmMapperFn(film: Film): GetFilmDto {
@@ -20,8 +20,20 @@ export class FilmsRepository {
       title: film.title,
       about: film.about,
       description: film.description,
-      schedule: film.schedule,
+      schedule: this.getScheduleMapperFn(film.schedule),
     };
+  }
+
+  private getScheduleMapperFn(schedules): GetScheduleDto[] {
+    return schedules.map((schedule) => ({
+      id: schedule.id,
+      daytime: schedule.daytime,
+      hall: schedule.hall,
+      rows: schedule.rows,
+      seats: schedule.seats,
+      price: schedule.price,
+      taken: schedule.taken,
+    }));
   }
 
   async findAll(): Promise<{ total: number; items: GetFilmDto[] }> {
@@ -38,22 +50,22 @@ export class FilmsRepository {
     };
   }
 
-  async findById(
-    id: string,
-  ): Promise<{ total: number; items: GetScheduleDto[] | null }> {
+  async findFilmById(id: string) {
     const film = await this.filmModel.findOne({ id });
-
     if (!film) {
       throw new NotFoundException('Фильм не найден!');
     }
+    return film;
+  }
+
+  async findSchedule(
+    id: string,
+  ): Promise<{ total: number; items: GetScheduleDto[] | null }> {
+    const film = await this.filmModel.findOne({ id });
 
     return {
       total: film.schedule.length,
       items: film.schedule,
     };
-  }
-
-  async findFilm(id: string) {
-    return await this.filmModel.findOne({ id });
   }
 }

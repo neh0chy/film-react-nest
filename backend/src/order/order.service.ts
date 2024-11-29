@@ -1,42 +1,51 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { OrderDto } from './dto/order.dto';
-import { FilmsRepository } from 'src/repository/films.repository';
+import { FilmsRepositoryMongo } from 'src/repository/films-mongodb.repository';
+import { FilmsRepositoryPostgres } from 'src/repository/films-postgres.repository';
+import { AppConfig } from 'src/app.config.provider';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly filmsRepository: FilmsRepository) {}
+  constructor(
+    @Inject('CONFIG') private readonly config: AppConfig,
+    private readonly filmsRepositoryMongo: FilmsRepositoryMongo,
+    private readonly filmsRepositoryPostgres: FilmsRepositoryPostgres,
+  ) {}
 
   async makeOrder(order: OrderDto) {
     const { tickets } = order;
 
     for (const ticket of tickets) {
       const { film, session, row, seat } = ticket;
+      let document;
+      const place = `${row}:${seat}`;
 
-      // поиск фильма в базе, для которого будут добавлены занятые места
-      const document = await this.filmsRepository.findFilm(film);
-
-      if (!document) {
-        throw new BadRequestException('Фильм не найден!');
+      if (this.config.database.driver === 'postgres') {
+        document = await this.filmsRepositoryPostgres.findFilmById(film);
+      } else if (this.config.database.driver === 'mongodb') {
+        document = await this.filmsRepositoryMongo.findFilmById(film);
       }
 
-      // поиск сеанса для найденного фильма
-      const currentSession = document.schedule.find(
-        (item) => item.id === session,
-      );
-      if (!currentSession) {
-        throw new BadRequestException('Сеанс не найден!');
+      const schedule = document.schedule.find((s) => s.id === session);
+      if (!schedule) throw new BadRequestException('Сеанс не найден');
+
+      const isTaken = Array.isArray(schedule.taken)
+        ? schedule.taken.includes(place)
+        : schedule.taken?.split(',').includes(place);
+
+      if (isTaken) throw new BadRequestException('Это место уже занято');
+
+      if (Array.isArray(schedule.taken)) {
+        schedule.taken.push(place);
+      } else {
+        schedule.taken = `${schedule.taken}, ${place}`;
       }
 
-      const seatIdentifier = `${row}:${seat}`;
-      if (currentSession.taken.includes(seatIdentifier)) {
-        throw new BadRequestException('Это место уже занято!');
+      if (this.config.database.driver === 'postgres') {
+        await this.filmsRepositoryPostgres.save(document);
+      } else if (this.config.database.driver === 'mongodb') {
+        await document.save();
       }
-
-      // пуш ряда и места в существующий массив сенса
-      currentSession.taken.push(seatIdentifier);
-
-      // обновление расписания для сеанса фильма на текущей итерации (const ticket of tickets)
-      await document.save();
     }
 
     return {

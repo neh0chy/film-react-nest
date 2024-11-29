@@ -22,7 +22,7 @@ export interface AppConfig {
 
 export interface AppConfigDatabase {
   driver: string;
-  host: string;
+  host?: string;
   url?: string;
   port?: string;
   username?: string;
