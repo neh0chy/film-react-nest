@@ -38,8 +38,9 @@ export class OrderService {
       if (Array.isArray(schedule.taken)) {
         schedule.taken.push(place);
       } else {
-        schedule.taken = `${schedule.taken}, ${place}`;
+        schedule.taken = schedule.taken ? `${schedule.taken},${place}` : place;
       }
+      // console.log(schedule.taken);
 
       if (this.config.database.driver === 'postgres') {
         await this.filmsRepositoryPostgres.save(document);

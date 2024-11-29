@@ -11,7 +11,7 @@ export const databaseProvider = {
   ): Promise<typeof mongoose | DataSource> => {
     if (config.database.driver == 'mongodb') {
       const dataSource = await mongoose.connect(config.database.url);
-      console.log('Database connected successfully');
+      // console.log('Database connected successfully');
       return dataSource;
     } else if (config.database.driver == 'postgres') {
       const dataSource = new DataSource({
@@ -25,7 +25,7 @@ export const databaseProvider = {
         synchronize: false,
       });
       await dataSource.initialize();
-      console.log('Database connected successfully');
+      // console.log('Database connected successfully');
       return dataSource;
     }
   },
