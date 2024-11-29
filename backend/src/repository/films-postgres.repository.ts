@@ -1,5 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FilmEntity } from 'src/films/entities/film.entity';
+import { ScheduleEntity } from 'src/films/entities/schedule.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class FilmsRepositoryPostgres {
     }
   }
 
-  async findFilmById(filmId: string) {
+  async findFilmById(filmId: string): Promise<FilmEntity> {
     try {
       return await this.filmsRepository.findOne({
         where: { id: filmId },
@@ -32,7 +33,9 @@ export class FilmsRepositoryPostgres {
     }
   }
 
-  async findSchedule(id: string) {
+  async findSchedule(
+    id: string,
+  ): Promise<{ total: number; items: ScheduleEntity[] | null }> {
     const filmSchedule = await this.findFilmById(id);
     return {
       total: filmSchedule.schedule.length,
