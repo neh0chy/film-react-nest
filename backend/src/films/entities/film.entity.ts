@@ -1,10 +1,4 @@
-import {
-  OneToMany,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-} from 'typeorm';
+import { OneToMany, Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ScheduleEntity, ScheduleRow } from './schedule.entity';
 
 export type FilmRow = Omit<FilmEntity, 'schedule'> & {
