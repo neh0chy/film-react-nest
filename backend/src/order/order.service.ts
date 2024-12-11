@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { OrderDto } from './dto/order.dto';
-import { FilmsRepositoryMongo } from 'src/repository/films-mongodb.repository';
-import { FilmsRepositoryPostgres } from 'src/repository/films-postgres.repository';
+import { FilmsRepositoryMongo } from '../repository/films-mongodb.repository';
+import { FilmsRepositoryPostgres } from '../repository/films-postgres.repository';
 import { AppConfig } from 'src/app.config.provider';
 
 @Injectable()

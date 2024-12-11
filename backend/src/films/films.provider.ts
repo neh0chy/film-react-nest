@@ -1,4 +1,4 @@
-import { AppConfig } from 'src/app.config.provider';
+import { AppConfig } from '../app.config.provider';
 import { FilmEntity } from './entities/film.entity';
 import { FilmSchema } from './schemas/films.schema';
 
