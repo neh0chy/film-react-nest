@@ -32,7 +32,7 @@ services:
     networks:
       - film_network
     volumes:
-      - ./backend/test/mongodb_initial_stub.sql:/docker-entrypoint-initdb.d/mongodb_initial_stub.sql
+      - ./backend/test/postgres_initial_stub.sql:/docker-entrypoint-initdb.d/postgres_initial_stub.sql
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - backend/.env

@@ -1,0 +1,39 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GH_TOKEN }}
+        
+    - name: Build/Push backend image
+      uses: docker/build-push-action@v3
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: true
+        tags: ghcr.io/neh0chy/backend:latest
+        
+    - name: Build/Push frontend image
+      uses: docker/build-push-action@v3
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: ghcr.io/neh0chy/frontend:latest
