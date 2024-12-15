@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AppConfig } from 'src/app.config.provider';
-import { FilmsRepositoryMongo } from 'src/repository/films-mongodb.repository';
-import { FilmsRepositoryPostgres } from 'src/repository/films-postgres.repository';
+import { FilmsRepositoryMongo } from '../repository/films-mongodb.repository';
+import { FilmsRepositoryPostgres } from '../repository/films-postgres.repository';
 
 @Injectable()
 export class FilmsService {

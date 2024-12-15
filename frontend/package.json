@@ -13,7 +13,6 @@
     "component": "sh ./bin/copy.sh Component src/components"
   },
   "dependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.24.4",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
     "react": "^18.3.1",
