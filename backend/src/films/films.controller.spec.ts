@@ -26,6 +26,7 @@ describe('FilmsController', () => {
 
   it('.getFilms() should call .findAll() from service', async () => {
     const films = await controller.getFilms();
+
     expect(films).toEqual([{ id: 'Test id1' }, { id: 'Test id2' }]);
     expect(service.findAll).toHaveBeenCalled();
   });
@@ -33,6 +34,7 @@ describe('FilmsController', () => {
   it('.getShedule() should call .findSchedule() from service', async () => {
     const id = 'Test id3';
     const film = await controller.getShedule(id);
+
     expect(film).toEqual({ id: 'Test id3' });
     expect(service.findSchedule).toHaveBeenCalledWith(id);
   });
